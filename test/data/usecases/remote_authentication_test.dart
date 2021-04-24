@@ -3,42 +3,34 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
-
-class RemoteAuthentication{
+class RemoteAuthentication {
   final HttpClient httpClient;
   final String url;
-
 
   RemoteAuthentication({@required this.httpClient, @required this.url});
 
   Future<void> auth() async {
-
-    await httpClient.request(url: url);
-
+    await httpClient.request(url: url, method:'POST');
   }
-
 }
 
-class HttpClientSpy extends Mock implements HttpClient{
+class HttpClientSpy extends Mock implements HttpClient {}
+
+abstract class HttpClient {
+  Future<void> request({@required String url, @required String method});
 }
 
-abstract class  HttpClient{
-  Future<void> request({
-    @required String url
-  });
- 
-}
-
-void main(){
-  test('Should call HttpClient with correct URL', ()async {
+void main() {
+  test('Should call HttpClient with correct values', () async {
     final httpClient = HttpClientSpy();
-    final url =  faker.internet.httpUrl();
+    final url = faker.internet.httpUrl();
 
     final sut = RemoteAuthentication(httpClient: httpClient, url: url);
     await sut.auth();
 
-    verify(httpClient.request(url: url));
-
+    verify(httpClient.request(
+      url: url,
+      method: 'POST'
+    ));
   });
-
 }
