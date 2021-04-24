@@ -10,7 +10,7 @@ class RemoteAuthentication {
   RemoteAuthentication({@required this.httpClient, @required this.url});
 
   Future<void> auth() async {
-    await httpClient.request(url: url, method:'POST');
+    await httpClient.request(url: url, method: 'POST');
   }
 }
 
@@ -21,16 +21,20 @@ abstract class HttpClient {
 }
 
 void main() {
-  test('Should call HttpClient with correct values', () async {
-    final httpClient = HttpClientSpy();
-    final url = faker.internet.httpUrl();
+  HttpClient httpClient;
+  String url;
+  RemoteAuthentication sut;
 
-    final sut = RemoteAuthentication(httpClient: httpClient, url: url);
+  setUp(() {
+    
+     httpClient = HttpClientSpy();
+     url = faker.internet.httpUrl();
+     sut = RemoteAuthentication(httpClient: httpClient, url: url);
+  });
+
+  test('Should call HttpClient with correct values', () async {
     await sut.auth();
 
-    verify(httpClient.request(
-      url: url,
-      method: 'POST'
-    ));
+    verify(httpClient.request(url: url, method: 'POST'));
   });
 }
